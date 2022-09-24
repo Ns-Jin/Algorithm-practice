@@ -7,24 +7,23 @@ using namespace std;
 int main() {
     string n;
     cin >> n;
-    priority_queue<int> pq;
-    int sum_digit = 0;
-    bool is_include_zero = false;
-    int result = 0;
+    long long sum_digit = 0;
+    int num_count[10] = {};
 
     for(int i=0;i<n.length();i++) {
-        pq.push(n[i]-'0');
-        sum_digit = n[i] - '0';
-        if((n[i]-'0') == 0) {
-            is_include_zero = true;
-        }
+        int num = n[i] - '0';
+        num_count[num]++;
+        sum_digit += num;
     }
 
-    if(is_include_zero && sum_digit % 3 == 0) {
-        while(!pq.empty()) {
-            cout << pq.top();
-            pq.pop();
+    if(num_count[0] != 0 && sum_digit % 3 == 0) {
+        for(int i=9;i>=0;i--) {
+            int count = num_count[i];
+            for(int j=0;j<count;j++) {
+                cout << i;
+            }
         }
+        cout << endl;
     }
     else {
         cout << -1 << endl;
