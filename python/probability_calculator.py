@@ -15,4 +15,4 @@ a = 0.0
 for i in range(5,31):
     a += 1.0/(i+10)*1/30
 
-print((1/30*1/30)/a)
+print(math.exp(-60) + 60*math.exp(-60) + 1800*math.exp(-60))
