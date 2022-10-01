@@ -1,11 +1,4 @@
-a = [-1,-2,-3,-4,-5,-6,1,2,3,4,5,6]
-b = [-1,-2,-3,-4,-5,-6,1,2,3,4,5,6]
-c = []
+# Implement your program here
+a = list(map(str,input("Enter a 3-part name: ").split(" ")))
 
-for i in a:
-    for j in b:
-        if i*j not in c:
-            c.append(i*j)
-
-print(len(c))
-print(c)
+print(a)

@@ -11,8 +11,14 @@ def comb(a,b):
     return math.comb(a,b)
 
 
-a = 0.0
+a = 0.01
 for i in range(5,31):
     a += 1.0/(i+10)*1/30
 
-print(math.exp(-60) + 60*math.exp(-60) + 1800*math.exp(-60))
+result = 0;
+for i in range(3,7):
+    for j in range(3,7):
+        if i != j:
+            result = result + comb(i-1,2)*comb(j-1,2)
+            
+print(1-579/36/36-293/36/36)
