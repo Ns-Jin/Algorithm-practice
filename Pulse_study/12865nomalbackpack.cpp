@@ -4,6 +4,9 @@
 
 using namespace std;
 
+void combinateion(int depth, int next) {
+    if()
+}
 int main() {
     int n, k;
     cin >> n >> k;
@@ -26,7 +29,7 @@ int main() {
     int dp[100001];
     for(int i=0;i<100001;i++) {
         for(int j=0;j<n;j++) {
-            
+
         }
     }
     cout << result_max << endl;
