@@ -4,9 +4,6 @@
 
 using namespace std;
 
-void combinateion(int depth, int next) {
-    if()
-}
 int main() {
     int n, k;
     cin >> n >> k;
