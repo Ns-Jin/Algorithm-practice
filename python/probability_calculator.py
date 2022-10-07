@@ -21,4 +21,4 @@ for i in range(3,7):
         if i != j:
             result = result + comb(i-1,2)*comb(j-1,2)
             
-print(1-579/36/36-293/36/36)
+print(comb(14,5))

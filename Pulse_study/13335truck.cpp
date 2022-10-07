@@ -16,7 +16,6 @@ int main() {
     queue<int> bridge;
     int on_bridge_weight = 0;
     int all_time = 0;
-    int time = 0;
     while(!truck.empty()) {
         if(bridge.size() == w) {
             on_bridge_weight -= bridge.front();
