@@ -30,6 +30,7 @@ ostream &operator << (ostream& stream, StringDecoder& sd) {
 	string temp;
     string result;
     stack<string> result_temp;
+    bool isInvalid = false;
 
     for(int i=0;i<data.length();i++) {
         if(data[i] == '{') {
@@ -41,56 +42,63 @@ ostream &operator << (ostream& stream, StringDecoder& sd) {
                 t_int = s_s.top() - '7';
             }
             else {
-                result = "ERROR: Invalid input";
+                isInvalid = true;
                 break;
             }
             s_i.push(t_int);
             s_s.pop();
+            if(!s_s.empty()) {
+                while(!s_s.empty() && s_s.top() != '{') {
+                    temp = s_s.top() + temp;
+                    s_s.pop();
+                }
+                result_temp.push(temp);
+                temp = "";
+            }
             s_s.push(data[i]);
         }
         else if(data[i] == '}') {
-            bool result_in = false;
             while(s_s.top() != '{') {
-                temp.insert(0, 1, s_s.top());
+                temp = s_s.top() + temp;
                 s_s.pop();
             }
             s_s.pop();
             if(temp == "") {
                 if(s_i.top() == 0) {
-                    result = "";
+                    if(!result_temp.empty()) {
+                        result_temp.pop();
+                    }
+                    s_i.pop();
                 }
                 else {
-                    temp = result;
+                    string temp_ = result_temp.top();
+                    temp = result_temp.top();
+                    result_temp.pop();
                     for(int j=0;j<s_i.top()-1;j++) {
-                        result += temp;
+                        temp += temp_;
                     }
+                    result_temp.push(temp);
                     s_i.pop();
                     temp = "";
                 }
             }
             else {
                 if(s_i.top() == 0) {
-                    result = "";
+                    if(!result_temp.empty()) {
+                        result_temp.pop();
+                    }
+                    s_i.pop();
                     temp = "";
                 }
                 else {
-                    result_in = true;
+                    string temp_;
+                    for(int j=0;j<s_i.top();j++) {
+                        temp_ += temp;
+                    }
+                    s_i.pop();
+                    result_temp.push(temp_);
+                    temp = "";
                 }
-            }
-            if(!s_s.empty()) {
-                string temp_;
-                while(!s_s.empty() && s_s.top() != '{') {
-                    temp_.insert(0, 1, s_s.top());
-                    s_s.pop();
-                }
-                result.append(temp_);
-            }
-            if(result_in) {
-                for(int j=0;j<s_i.top();j++) {
-                    result += temp;
-                }
-                s_i.pop();
-                temp = "";
             }
         }
         else {
@@ -98,17 +106,24 @@ ostream &operator << (ostream& stream, StringDecoder& sd) {
         }
     }
 
-    if(result != "ERROR: Invalid input") {
-        string temp;
+    if(isInvalid) {
+        stream << "ERROR: Invlid input";
+    }
+    else {
+        while(!result_temp.empty()) {
+            result = result_temp.top() + result;
+            result_temp.pop();
+        }
+        string temp_;
         while(!s_s.empty()) {
-            temp.insert(0, 1, s_s.top());
+            temp_ = s_s.top() + temp_;
             s_s.pop();
         }
-        result.append(temp);
+        result += temp_;
     }
-    
+
     stream << result;
-	
+    
 	return stream;
 }
 
