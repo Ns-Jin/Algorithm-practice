@@ -1,9 +1,10 @@
-#include<iostream>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
 int main() {
-    int prime_nums[10001];
+    int prime_nums[2000];
     int len_prime_nums = 0;
     for(int i=2;i<10001;i++) {
         bool is_prime = true;
@@ -23,39 +24,39 @@ int main() {
     for(int i=0;i<t;i++) {
         int n;
         cin >> n;
-        int result_num;
-        int find_index;
-        for(int j=0;j<len_prime_nums-1;j++) {
-            if(prime_nums[j] >= n/2) {
-                find_index = j;
-                break;
-            }
-        }
-        for(int l=0;l<len_prime_nums-1-find_index;l++) {
-            bool find_prime_pa = false;
-            for(int j=find_index;j>=0;j--) {
-                bool find_prime = false;
-                int find_num = n - prime_nums[find_index];
-                for(int k=find_index;k>=0;k--) {
-                    if(prime_nums[k] == find_num) {
-                        find_prime = true;
-                        break;
-                    }
-                    else if(prime_nums[k] < find_num) {
-                        break;
-                    }
-                }
-                if(find_prime) {
-                    find_prime_pa = true;
-                    result_num = prime_nums[find_index];
-                    break;
-                }
-            }
-            if(find_prime_pa) {
-                break;
-            }
-        }
+        int result = 0;
         
-        cout << n - result_num << " " << result_num << endl;
+        if(n>5000) {
+            for(int j=len_prime_nums-1;j>0;j--) {
+                if(find(prime_nums,prime_nums+len_prime_nums,n-prime_nums[j]) != prime_nums + len_prime_nums) {
+                    if(n%prime_nums[j] == 0 || n - result == prime_nums[j]) {
+                        result = prime_nums[j];
+                        break;
+                    }
+                    else {
+                        result = prime_nums[j];
+                    }
+                }
+            } 
+        }
+        else {
+            for(int j=0;j<len_prime_nums;j++) {
+                if(find(prime_nums,prime_nums+len_prime_nums,n-prime_nums[j]) != prime_nums + len_prime_nums) {
+                    if(n%prime_nums[j] == 0 || n - result == prime_nums[j]) {
+                        result = prime_nums[j];
+                        break;
+                    }
+                    else {
+                        result = prime_nums[j];
+                    }
+                }
+            }
+        }
+        if(result < n-result) {
+            cout << result << " " << n-result << endl;
+        }
+        else {
+            cout << n-result << " " << result << endl; 
+        }
     }
 }
