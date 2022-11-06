@@ -1,4 +1,5 @@
-# Implement your program here
-a = list(map(str,input("Enter a 3-part name: ").split(" ")))
+a = [1,2,3,]
+b = a[:]
+b[0] = 4
 
-print(a)
+print(a,b)
