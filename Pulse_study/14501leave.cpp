@@ -17,7 +17,7 @@ int main() {
             dp[i] = dp[i+1];
         }
         else {
-            dp[i] = max(dp[i+1], schedule[i][1] + dp[i + schedule[i][0]]);
+            dp[i] = max(dp[i+1], schedule[i][1] + dp[i + schedule[i][0]]); //i+Ti
         }
     }
 
