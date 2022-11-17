@@ -12,17 +12,17 @@ int main()
         int n,m;
         cin >> n >> m;
 
-        int importances[10] = {0,0,0,0,0,0,0,0,0,0};    //중요도 개수
+        int importances[10] = {0,0,0,0,0,0,0,0,0,0};    //0~9중요도 개수
         int target_importance = 0;  //타겟의 중요도
         queue<int> q;
         for(int j=0;j<n;j++) {
             int temp;
             cin >> temp;
             q.push(temp);
-            if(j == m) {
-                target_importance = temp;   //타겟의 중요도
+            if(j == m) {    //m번째 놓인 타겟의 중요도 확인
+                target_importance = temp; 
             }
-            importances[temp] += 1;
+            importances[temp] += 1;     //해당 중요도 갯수 증가
         }
 
         int target_index = m;   //타겟 인덱스
