@@ -1,99 +1,125 @@
 #include <iostream>
-#include<deque>
+#include <string>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
-int main() {
-    int t;
-    cin >> t;
-    for(int i=0;i<t;i++) {
-        int n;
-        cin >> n;
-        deque<int> dq;
-        int temp;
-        for(int j=0;j<n;j++){
-            cin >> temp;
-            dq.push_back(temp);
-        }
-        int geunwoo = 0;
-        int myeongwoo = 0;
-        int turn  = 0;
-        while(dq.size() > 2) {
-            if(turn%2 == 0) {    //근우턴
-                if(dq.front() < dq.back()) {
-                    geunwoo += dq.back();
-                    dq.pop_back();
-                }
-                else if(dq.front() > dq.back()) {
-                    geunwoo += dq.front();
-                    dq.pop_front();
-                }
-                else {  //같을때 적은쪽 선택     
-                    int temp = dq.back();
-                    dq.pop_back();
-                    int back_value = dq.back();
-                    dq.push_back(temp);
-                    temp = dq.front();
-                    dq.pop_front();
-                    if(back_value < dq.front()) {
-                        geunwoo += dq.back();
-                        dq.pop_back();
-                    }
-                    else {
-                        geunwoo += temp;
-                    }
-                }
-            }
-            else {
-                if(dq.front() < dq.back()) {
-                    myeongwoo += dq.back();
-                    dq.pop_back();
-                }
-                else if(dq.front() > dq.back()) {
-                    myeongwoo += dq.front();
-                    dq.pop_front();
-                }
-                else {  //같을때 적은쪽 선택     
-                    int temp = dq.back();
-                    dq.pop_back();
-                    int back_value = dq.back();
-                    dq.push_back(temp);
-                    temp = dq.front();
-                    dq.pop_front();
-                    if(back_value < dq.front()) {
-                        myeongwoo += dq.back();
-                        dq.pop_back();
-                    }
-                    else {
-                        myeongwoo += temp;
-                    }
-                }
-            }
-            turn++;
-        }
-        while(!dq.empty()) {
-            if(turn%2 == 0) {
-                if(dq.front() < dq.back()) {
-                    geunwoo += dq.back();
-                    dq.pop_back();
-                }
-                else {
-                    geunwoo += dq.front();
-                    dq.pop_front();
-                }
-            }
-            else {
-                if(dq.front() < dq.back()) {
-                    myeongwoo += dq.back();
-                    dq.pop_back();
-                }
-                else {
-                    myeongwoo += dq.front();
-                    dq.pop_front();
-                }
-            }
-        }
-        
-        cout << geunwoo << endl;
-    }
+vector<vector<int>> map;
+vector<vector<int>> next_map;
+vector<vector<int>> visited;
+queue<pair<int,int>> q;
+
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+
+bool isPossible(int x,int y) {
+	int x_size = map.size();
+	int y_size = map[0].size();
+	if(x < 0 || x >= x_size) {
+		return false;
+	}
+	if(y < 0 || y >= y_size) {
+		return false;
+	}
+	if(map[x][y] == 1) {
+		return false;
+	}
+	if(visited[x][y] == 1) {
+		return false;
+	}
+	
+	return true;
 }
+
+bool isPo(int x, int y) {
+	int x_size = map.size();
+	int y_size = map[0].size();
+	if(x < 0 || x > x_size-1) {
+		return false;
+	}
+	if(y < 0 || y >y_size-1) {
+		return false;
+	}
+	
+	return true;
+}
+
+void bfs(int x, int y) {
+	visited[x][y] = 1;
+	q.push(make_pair(x,y));
+	while(!q.empty()) {
+		int cur[2];
+		cur[0] = q.front().first;
+		cur[1] = q.front().second;
+		q.pop();
+		for(int i=0;i<4;i++) {
+			int nx = cur[0] + dx[i];
+			int ny = cur[1] + dy[i];
+			if(isPossible(nx,ny)) {
+				q.push(make_pair(nx,ny));
+				visited[nx][ny] = 1;
+				for(int j=0;j<4;j++) {
+					int _nx = nx + dx[j];
+					int _ny = ny + dy[j];
+					if(isPo(_nx,_ny)) {
+						next_map[_nx][_ny] = 0;
+					}
+				}
+			}
+		}
+	}
+}
+
+int main(void){
+	int n, n_;
+	cin >> n >> n_;
+	map.resize(n,vector<int>(n_,0));
+	next_map.resize(n,vector<int>(n_,0));
+	visited.resize(n,vector<int>(n_,0));
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<n_;j++) {
+			char temp = cin.get();
+			if(temp == '\n') {
+				temp = cin.get();
+			}
+			map[i][j] = temp - '0';
+			next_map[i][j] = temp - '0';
+		}
+	}
+	
+	bfs(0,0);
+	int result = 0;
+	while(true) {
+		bool isEnd = true;
+		for(int i=0;i<n;i++) {
+			if(isEnd == false) {
+				break;
+			}
+			for (int j=0;j<n_;j++) {
+				if(map[i][j] == 1) {
+					isEnd = false;
+					break;
+				}
+			}
+		}
+		if(isEnd) {
+			break;
+		}
+		else {
+			result++;
+			for(int i=0;i<n;i++) {
+				for(int j=0;j<n_;j++) {
+					map[i][j] = next_map[i][j];
+					visited[i][j] == 0;
+				}
+			}
+			bfs(0,0);
+		}
+	}
+	
+	cout << result << endl;
+	
+	return 0;
+}
+

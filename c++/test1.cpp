@@ -1,160 +1,131 @@
-// No skeleton code is provided
 #include <iostream>
 #include <string>
-#include <map>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
-long long hash_function(long long n) {
-	return n % 2147483647;
+vector<vector<int>> map;
+vector<vector<int>> next_map;
+vector<vector<int>> visited;
+queue<pair<int,int>> q;
+
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+
+bool isPossible(int x,int y) {
+	int x_size = map.size();
+	int y_size = map[0].size();
+	if(x < 0 || x >= x_size) {
+		return false;
+	}
+	if(y < 0 || y >= y_size) {
+		return false;
+	}
+	if(map[x][y] == 1) {
+		return false;
+	}
+	if(visited[x][y] == 1) {
+		return false;
+	}
+	
+	return true;
 }
 
-class Node {
-	public:
-		int value;
-		string key;
-		Node* next;
-		Node() {
-			value = -1;
-			key = "";
-			next = nullptr;
-		}
-		Node(int value, string key) {
-			this->value = value;
-			this->key = key;
-			next = nullptr;
-		}
-};
+bool isPo(int x, int y) {
+	int x_size = map.size();
+	int y_size = map[0].size();
+	if(x < 0 || x > x_size-1) {
+		return false;
+	}
+	if(y < 0 || y >y_size-1) {
+		return false;
+	}
+	
+	return true;
+}
 
-vector<vector<string>> storage;
-
-int main() {
-	int a;
-	float min_lf, max_lf;
-	cin >> a >> min_lf >> max_lf;
-	long long rep;
-	long long count_i;
-	cin >> rep;
-	storage.resize(rep,vector<string>(3));
-	for(long long i=0;i<rep;i++) {
-		cin >> storage[i][0] >> storage[i][1] >> storage[i][2];
-		if(storage[i][0] == "i") {
-			count_i++;
+void bfs(int x, int y) {
+	visited[x][y] = 1;
+	q.push(make_pair(x,y));
+	while(!q.empty()) {
+		int cur[2];
+		cur[0] = q.front().first;
+		cur[1] = q.front().second;
+		visited[cur[0]][cur[1]] = 1;
+		q.pop();
+		for(int i=0;i<4;i++) {
+			int nx = cur[0] + dx[i];
+			int ny = cur[1] + dy[i];
+			if(isPossible(nx,ny)) {
+				q.push(make_pair(nx,ny));
+				for(int j=0;j<4;j++) {
+					int _nx = nx + dx[j];
+					int _ny = ny + dy[j];
+					if(isPo(_nx,_ny)) {
+						next_map[_nx][_ny] = 0;
+					}
+				}
+			}
 		}
 	}
-	long long size = 512;
-	while(true) {
-		if(count_i/size > max_lf) {
-			cout << "Rehashing: " << size << " -> ";
-			size = size * 2;
-			cout << size <<endl;
+}
+
+int main(void){
+	int n, n_;
+	cin >> n >> n_;
+	map.resize(n,vector<int>(n_,0));
+	next_map.resize(n,vector<int>(n_,0));
+	visited.resize(n,vector<int>(n_,0));
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<n_;j++) {
+			char temp = cin.get();
+			if(temp == '\n') {
+				temp = cin.get();
+			}
+			map[i][j] = temp - '0';
+			next_map[i][j] = temp - '0';
 		}
-		else {
+	}
+	
+	int result = 0; 
+	while(true) {
+		cout << "---------------------" << endl;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<n_;j++) {
+				cout << map[i][j];
+			}
+			cout << endl;
+		}
+		bool isEnd = true;
+		for(int i=0;i<n;i++) {
+			if(isEnd == false) {
+				break;
+			}
+			for (int j=0;j<n_;j++) {
+				if(map[i][j] == 1) {
+					isEnd = false;
+					break;
+				}
+			}
+		}
+		if(isEnd) {
 			break;
 		}
+		else {
+			result++;
+			bfs(0,0);
+			for(int i=0;i<n;i++) {
+				for(int j=0;j<n_;j++) {
+					map[i][j] = next_map[i][j];
+					visited[i][j] = 0;
+				}
+			}
+		}
 	}
-	Node result[size];
-	long long bucket[size] = {0,};
-	long long entry_count = 0;
 	
-	for(long long i=0;i<rep;i++) {		//반복
-		string key = storage[i][1];			//원래 key값
-		long long hash_code = 0;
-		for(int j=0;j<key.length();j++) {
-			int num_i = int(key[j]);
-			hash_code = hash_function(num_i + a*hash_code);			//key-> hashing => hash code
-		}
-		hash_code = hash_code % size;
-		//저장 시작
-		if (storage[i][0] == "i") {
-			Node *new_node = new Node(stoi(storage[i][2]), key);
-			if(result[hash_code].value == -1) {
-				result[hash_code] = *new_node;
-				entry_count++;
-				bucket[hash_code]++;
-				free(new_node);
-			}
-			else {
-				Node* now_node = &result[hash_code];
-				bool find_redup = false;
-				while(now_node->next != nullptr) {
-					if (now_node->value == stoi(storage[i][2]) && now_node->key == key) {
-						find_redup = true;
-					}
-					now_node = now_node->next;
-				}
-				if (now_node->value == stoi(storage[i][2]) && now_node->key == key) {
-					find_redup = true;
-				}
-				if (find_redup == false) {
-					now_node->next = new_node;
-					entry_count++;
-					bucket[hash_code]++;
-				}
-			}
-		}
-		else if(storage[i][0] == "r") {
-			if(result[hash_code].value != -1) {
-				if(result[hash_code].value == stoi(storage[i][2])) {
-					if(result[hash_code].next == nullptr) {
-						result[hash_code] = *new Node();
-					}
-					else {
-						result[hash_code] = *result[hash_code].next;
-					}
-					entry_count--;
-					bucket[hash_code]--;
-				}
-				else {
-					if(result[hash_code].next != nullptr) {
-						Node* pre_node = &result[hash_code];
-						Node* now_node = pre_node->next;
-						while(true) {
-							if(now_node == nullptr) {
-								break;
-							}
-							if(now_node->value == stoi(storage[i][2])) {
-								pre_node->next = now_node->next;
-								entry_count--;
-								bucket[hash_code]--;
-								free(now_node);
-								break;
-							}
-							pre_node = now_node;
-							now_node = now_node->next;
-						}
-					}
-				}
-			}
-		}
-	}
-	long long over_five_count = 0;
-	long long max_index = 0;
-	long long max_c = 0;
-	for(long long i=size-1;i>=0;i--) {
-		if(bucket[i] > max_c) {
-			max_index = i;
-			max_c = bucket[i];
-		}
-		if(bucket[i] > 5) {
-			over_five_count++;
-		}
-	}
-	cout << "Number of entries: " << entry_count << endl;
-	cout << "Size of the bucket array: " << size << endl;
-	cout << over_five_count << " buckets contain more than 5 elements" << endl;
-	cout << "The longest bucket: ";
-	if (entry_count == 0) {
-		cout << size - 1 << endl;
-	}
-	else {
-		cout << max_index << endl;
-		Node now_node = result[max_index];
-		while(now_node.next != nullptr) {
-			cout << "(" << now_node.key << "," << now_node.value << ")" << endl;
-			now_node = *now_node.next;
-		}
-		cout << "(" << now_node.key << "," << now_node.value << ")" << endl;
-	}
+	cout << result << endl;
+	
+	return 0;
 }
+
