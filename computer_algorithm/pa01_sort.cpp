@@ -87,7 +87,7 @@ void quick(int k, int low, int high) {
     int j = high;   //오른쪽부터 살펴볼 변수
 
     while(i < j) {  //서로 교차되기 전까지
-        //교차되기전과 puvot보다 작거나 같은 원소를 찾을때까지
+        //교차되기전과 pivot보다 작거나 같은 원소를 찾을때까지
         while(i < j && v[j] > pivot){   
             j--;
         }//교차되기전과 puvot보다 큰 원소를 찾을때까지
@@ -100,7 +100,7 @@ void quick(int k, int low, int high) {
         }
     }
     //pivot과 pivot보다 작은값중 가장 오른쪽 원소와 swap
-    swap(v[low],v[i]);  
+    swap(v[low],v[i]);
     count++; //진행단계 ++
     quick(k, low, i - 1);   //pivot에 의해 분할된 왼쪽 부분 다시 재귀적으로 정렬
     quick(k, i + 1, high);  //pivot에 의해 분할된 오른쪽 부분 다시 재귀적으로 정렬
